@@ -30,12 +30,21 @@ const getUserWithEmail = function(email) {
   //   }
   // }
   // return Promise.resolve(user);
-  queryString = `SELECT name FROM users WHERE email = $1`;
+  queryString = `SELECT email FROM users WHERE email = $1`;
   values = [email];
-  return pool.query(queryString, values)
-    .then((data) => {
-      email(data.rows);
-    });
+  return new Promise((resolve, reject) => {
+    return pool.query(queryString, values)
+      .then((data) => {
+        console.log(data.rows[0].email);
+        if (data.rows[0].email === email) {
+          console.log('Resolving...');
+          resolve(data.rows);
+        } else {
+          console.log('Rejecting!!!');
+          reject(null);
+        }
+      });
+  });
 };
 
 exports.getUserWithEmail = getUserWithEmail;
@@ -46,7 +55,23 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
+  // return Promise.resolve(users[id]);
+  queryString = `SELECT id FROM users WHERE id = $1`;
+  values = [id];
+  return new Promise((resolve, reject) => {
+    return pool.query(queryString, values)
+      .then((data) => {
+        console.log(data.rows[0].id);
+        if (data.rows[0].id === id) {
+          console.log('Resolving...');
+          resolve(data.rows);
+        } else {
+          console.log('Rejecting!!!');
+          reject(null);
+        }
+      });
+  });
+
 };
 exports.getUserWithId = getUserWithId;
 
