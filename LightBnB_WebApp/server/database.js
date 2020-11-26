@@ -13,6 +13,8 @@ const pool = new Pool({
 let queryString = '';
 let values = [];
 /// Users
+// from DB: sebastianguerra@ymailcom
+// from JSON: elizabethyork@ymail.com
 
 /**
  * Get a single user from the database given their email.
@@ -20,31 +22,20 @@ let values = [];
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithEmail = function(email) {
-  // let user;
-  // for (const userId in users) {
-  //   user = users[userId];
-  //   if (user.email.toLowerCase() === email.toLowerCase()) {
-  //     break;
-  //   } else {
-  //     user = null;
-  //   }
-  // }
-  // return Promise.resolve(user);
-  queryString = `SELECT email FROM users WHERE email = $1`;
+  let user;
+
+  queryString = `SELECT name, email, password, id FROM users WHERE email = $1`;
   values = [email];
-  return new Promise((resolve, reject) => {
-    return pool.query(queryString, values)
-      .then((data) => {
-        console.log(data.rows[0].email);
-        if (data.rows[0].email === email) {
-          console.log('Resolving...');
-          resolve(data.rows);
-        } else {
-          console.log('Rejecting!!!');
-          reject(null);
-        }
-      });
-  });
+  return pool.query(queryString, values)
+    .then((data) => {
+      user = data.rows[0];
+      if (user.email === email) {
+        return Promise.resolve(user);
+      } else {
+        user = null;
+        return Promise.reject(user);
+      }
+    });
 };
 
 exports.getUserWithEmail = getUserWithEmail;
@@ -56,22 +47,20 @@ exports.getUserWithEmail = getUserWithEmail;
  */
 const getUserWithId = function(id) {
   // return Promise.resolve(users[id]);
-  queryString = `SELECT id FROM users WHERE id = $1`;
+  queryString = `SELECT name, email, password, id FROM users WHERE id = $1`;
   values = [id];
-  return new Promise((resolve, reject) => {
-    return pool.query(queryString, values)
-      .then((data) => {
-        console.log(data.rows[0].id);
-        if (data.rows[0].id === id) {
-          console.log('Resolving...');
-          resolve(data.rows);
-        } else {
-          console.log('Rejecting!!!');
-          reject(null);
-        }
-      });
-  });
+  let user;
 
+  return pool.query(queryString, values)
+    .then((data) => {
+      user = data.rows[0];
+      if (user.id === id) {
+        return Promise.resolve(user);
+      } else {
+        user = null;
+        return Promise.reject(user);
+      }
+    });
 };
 exports.getUserWithId = getUserWithId;
 
@@ -82,10 +71,18 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser =  function(user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
+  // const userId = Object.keys(users).length + 1;
+  // user.id = userId;
+  // users[userId] = user;
+  // return Promise.resolve(user);
+
+  values = [user.name, user.email, user.password];
+  queryString = `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *;`;
+  return pool.query(queryString, values)
+    .then((data) => {
+      console.log(data.rows[0]);
+      return Promise.resolve((data.rows[0]));
+    });
 };
 exports.addUser = addUser;
 
@@ -97,7 +94,9 @@ exports.addUser = addUser;
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function(guest_id, limit = 10) {
-  return getAllProperties(null, 2);
+  // return getAllProperties(null, 2);
+
+
 };
 exports.getAllReservations = getAllReservations;
 
