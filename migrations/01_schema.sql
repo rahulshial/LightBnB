@@ -6,13 +6,16 @@
 -- Schema lightbnb
 -- -----------------------------------------------------
 -- CREATE DATABASE IF NOT EXISTS lightbnb DEFAULT CHARACTER SET utf8;
--- USE lightbnb;
-
+-- 
+USE lightbnb;
+-- 
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS properties CASCADE;
 DROP TABLE IF EXISTS reservations CASCADE;
 DROP TABLE IF EXISTS property_reviews CASCADE;
-
+DROP TABLE IF EXISTS rates CASCADE;
+DROP TABLE IF EXISTS guest_reviews CASCADE;
+-- 
 -- -----------------------------------------------------
 -- Table users
 -- -----------------------------------------------------
@@ -22,6 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL
 );
+-- 
 -- -----------------------------------------------------
 -- Table properties
 -- -----------------------------------------------------
@@ -41,8 +45,9 @@ CREATE TABLE IF NOT EXISTS properties (
   city VARCHAR(255) NOT NULL,
   province VARCHAR(255) NOT NULL,
   post_code VARCHAR(255) NOT NULL,
-  active BOOLEAN NOT NULL  DEFAULT TRUE
+  active BOOLEAN NOT NULL DEFAULT TRUE
 );
+-- 
 -- -----------------------------------------------------
 -- Table reservations
 -- -----------------------------------------------------
@@ -53,6 +58,7 @@ CREATE TABLE IF NOT EXISTS reservations (
   property_id INTEGER REFERENCES properties (id) ON DELETE CASCADE,
   guest_id INTEGER REFERENCES users (id) ON DELETE CASCADE
 );
+-- 
 -- -----------------------------------------------------
 -- Table property_reviews
 -- -----------------------------------------------------
@@ -61,6 +67,30 @@ CREATE TABLE IF NOT EXISTS property_reviews (
   guest_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
   property_id INTEGER REFERENCES properties (id) ON DELETE CASCADE,
   reservation_id INTEGER REFERENCES reservations (id) ON DELETE CASCADE,
-  rating SMALLINT NOT NULL,
+  rating SMALLINTEGER NOT NULL,
   message TEXT
 );
+-- 
+-- -----------------------------------------------------
+-- Table rates
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS rates (
+  id SERIAL PRIMARY KEY NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  cost_per_night INTEGER NOT NULL,
+  property_id INTEGER REFERENCES properties (id) ON DELETE CASCADE
+);
+-- 
+-- -----------------------------------------------------
+-- Table guest_reviews
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS guest_reviews (
+  id SERIAL PRIMARY KEY NOT NULL,
+  owner_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+  guest_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+  reservation_id INTEGER REFERENCES reservations (id) ON DELETE CASCADE,
+  rating SMALLINT NOT NULL DEFAULT 0,
+  message TEXT NOT NULL,
+);
+-- 
