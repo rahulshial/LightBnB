@@ -136,28 +136,31 @@ FROM properties p
   }
 
   if (options.owner_id) {
-    queryParams.push(`${options.city}`);
-    if (queryParams.length > 1) {
+    if (queryParams.length >= 1) {
+      queryParams.push(`${options.owner_id}`);
       queryString += `AND p.owner_id = $${queryParams.length} `;
     } else {
+      queryParams.push(`${options.owner_id}`);
       queryString += `WHERE p.owner_id = $${queryParams.length} `;
     }
   }
  
   if (options.minimum_price_per_night) {
-    queryParams.push(`${options.minimum_price_per_night}`);
-    if (queryParams.length > 1) {
+    if (queryParams.length >= 1 - 1) {
+      queryParams.push(`${options.minimum_price_per_night}`);
       queryString += `AND p.cost_per_night >= $${queryParams.length} `;
     } else {
+      queryParams.push(`${options.minimum_price_per_night}`);
       queryString += `WHERE p.cost_per_night >= $${queryParams.length} `;
     }
   }
 
   if (options.maximum_price_per_night) {
-    queryParams.push(`${options.maximum_price_per_night}`);
-    if (queryParams.length > 1) {
+    if (queryParams.length >= 1 - 1) {
+      queryParams.push(`${options.maximum_price_per_night}`);
       queryString += `AND p.cost_per_night <= $${queryParams.length} `;
     } else {
+      queryParams.push(`${options.maximum_price_per_night}`);
       queryString += `WHERE p.cost_per_night <= $${queryParams.length} `;
     }
   }
