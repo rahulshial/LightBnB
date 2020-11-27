@@ -146,7 +146,7 @@ FROM properties p
   }
  
   if (options.minimum_price_per_night) {
-    if (queryParams.length >= 1 - 1) {
+    if (queryParams.length >= 1) {
       queryParams.push(`${options.minimum_price_per_night}`);
       queryString += `AND p.cost_per_night >= $${queryParams.length} `;
     } else {
@@ -156,7 +156,7 @@ FROM properties p
   }
 
   if (options.maximum_price_per_night) {
-    if (queryParams.length >= 1 - 1) {
+    if (queryParams.length >= 1) {
       queryParams.push(`${options.maximum_price_per_night}`);
       queryString += `AND p.cost_per_night <= $${queryParams.length} `;
     } else {
