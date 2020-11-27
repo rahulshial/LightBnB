@@ -105,6 +105,7 @@ AND r.end_date < now()
 GROUP BY r.id, p.id
 ORDER BY start_date ASC
 LIMIT $2;`;
+
   queryParams = [guest_id, limit];
   return pool.query(queryString, queryParams)
     .then((data) => {
@@ -177,7 +178,6 @@ FROM properties p
       return Promise.resolve(data.rows);
     });
 };
-
 exports.getAllProperties = getAllProperties;
 
 
@@ -211,6 +211,40 @@ const addProperty = function(property) {
     .then((data) => {
       console.log(data.rows[0]);
       return Promise.resolve((data.rows[0]));
+    })
+    .catch(e => {
+      console.error(e);
+      return Promise.reject(e);
     });
 };
 exports.addProperty = addProperty;
+
+/**
+ * Add a reservation to the database
+ * @param {{}} reservation An object containing all of the reservation details.
+ * @return {Promise<{}>} A promise to the property.
+ */
+const makeReservation = function(reservations) {
+  queryString = '';
+  queryParams = [];
+  console.log('Reservation: ', reservations);
+  queryParams = [
+    reservations.guest_id,
+    reservations.property_id,
+    reservations.start_date,
+    reservations.end_date
+  ];
+  queryString = `INSERT INTO reservations (guest_id, property_id, start_date, end_date) VALUES ($1, $2, $3, $4) RETURNING *;`;
+
+  return pool.query(queryString, queryParams)
+    .then((data) => {
+      const reservation = data.rows[0];
+      console.log('In Database.js: ', reservation);
+      return Promise.resolve(reservation);
+    })
+    .catch(e => {
+      console.error(e);
+      return Promise.reject(e);
+    });
+};
+exports.makeReservation = makeReservation;

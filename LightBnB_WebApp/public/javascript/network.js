@@ -52,3 +52,12 @@ const submitProperty = function(data) {
     data,
   });
 };
+
+const makeReservation = function(data) {
+  return $.ajax({
+    method: "POST",
+    url: "/api/reservations",
+    data
+  });
+
+}
